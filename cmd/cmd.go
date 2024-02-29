@@ -15,7 +15,6 @@ var rootCmd = &cobra.Command{
 	Short: "A simple file encryption/decryption tool",
 	Long:  `filecrypt is a simple CLI tool for encrypting and decrypting files using a passkey.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// If no subcommand is provided or an invalid one is provided
 		cmd.Help()
 	},
 }
