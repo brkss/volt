@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 
+	"github.com/brkss/volt/crypting"
 	"github.com/spf13/cobra"
 )
 
@@ -39,8 +42,20 @@ var encryptCmd = &cobra.Command{
 		passkey := args[1]
 		outputFile := args[2]
 
-		fmt.Printf("Encrypting file %s with passkey %s to %s\n", inputPath, passkey, outputFile)
-		// Add your encryption logic here
+		plaintext, err := ioutil.ReadFile(inputPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ciphertext, err := crypting.Encrypt(plaintext, passkey)
+
+		if err != nil {
+			log.Fatal("encrypt : ", err)
+		}
+
+		if err := ioutil.WriteFile(outputFile, ciphertext, 0644); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("file encrypted successfult.")
 	},
 }
 
@@ -52,7 +67,16 @@ var decryptCmd = &cobra.Command{
 		inputPath := args[0]
 		passkey := args[1]
 
-		fmt.Printf("Decrypting file %s with passkey %s\n", inputPath, passkey)
-		// Add your decryption logic here
+		ciphertext, err := ioutil.ReadFile(inputPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		decrypted, err := crypting.Decrypt(ciphertext, passkey)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(string(decrypted))
 	},
 }
